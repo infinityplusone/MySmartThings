@@ -1,5 +1,5 @@
 /**
- *  Copyright 2017 Jonathan Knoll
+ *  Copyright 2015 Zachary Priddy
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  *  in compliance with the License. You may obtain a copy of the License at:
@@ -12,13 +12,14 @@
  *
  */
 metadata {
-  definition (name: "Water Pump Sensor", namespace: "infinityplusone", author: "infinityplusone") {
+  definition (name: "ZP Pet Water Fountain", namespace: "infinityplusone", author: "infinityplusone") {
     capability "Indicator"
+    capability "Switch"
     capability "Sensor"
-    capability "Water Sensor"
+        capability "Water Sensor"
         
-    command "ok"
-    command "disabled"
+    command "wet"
+        command "dry"
 
   }
 
@@ -29,25 +30,42 @@ metadata {
   tiles(scale: 2) {
       multiAttributeTile(name:"water", type: "water", width: 6, height: 4){
       tileAttribute ("device.water", key: "PRIMARY_CONTROL") {
-        attributeState "ok", label:'OK', icon:"st.alarm.water.dry", backgroundColor:"#53a7c0"
-        attributeState "disabled", label:'Full', icon:"st.alarm.water.water", backgroundColor:"#ff0000"
+        attributeState "wet", label:'FULL', icon:"st.alarm.water.dry", backgroundColor:"#53a7c0"
+        attributeState "dry", label:'EMPTY', icon:"st.alarm.water.water", backgroundColor:"#ff0000"
       }
     }
-  }
+        
+        standardTile("switch", "device.switch", width: 2, height: 2, canChangeIcon: true) {
+            state "off", label: '${name}', action: "on", icon: "st.switches.switch.off", backgroundColor: "#ff0000"
+        state "on", label: '${name}', action: "off", icon: "st.switches.switch.on", backgroundColor: "#79b821"
+}
+
     main(["water"])
+    details(["water","switch"])
   }
 }
 
 def parse(String description) {
 }
 
-
-def ok() {
-  sendEvent(name: "water", value: "ok")
-    log.info "OK"
+def on() {
+  sendEvent(name: "switch", value: "on")
+    log.info "Water Fountain On"
 }
 
-def disabled() {
-  sendEvent(name: "water", value: "disabled")
-    log.info "Full"
+
+def off() {
+  sendEvent(name: "switch", value: "off")
+    log.info "Water Fountain Off"
+}
+
+
+def dry() {
+  sendEvent(name: "water", value: "dry")
+    log.info "Water Fountain Empty"
+}
+
+def wet() {
+  sendEvent(name: "water", value: "wet")
+    log.info "Water Fountain Full"
 }
